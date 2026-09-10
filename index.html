@@ -31,14 +31,15 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}input,te
   <section class="step">
     <div class="stepTop"><div class="num">1</div><h2>簽約</h2></div>
     <div class="row"><div><label>日期</label><input type="date" data-k="signDate"></div><div><label>簽約款</label><input data-k="signMoney" placeholder="例如：97萬"></div></div>
-    <ul class="tasks"><li>開立履約保證專戶</li><li>簽約、用印及相關文件確認</li><li>申報土地增值稅</li></ul>
+    <ul class="tasks"><li>開立履約保證專戶</li><li>完成簽約及相關文件確認</li><li>申報土地增值稅</li></ul>
     <label>補充提醒</label><textarea data-k="signNote" placeholder="例如：請攜帶印鑑、身分證件"></textarea>
   </section>
 
   <section class="step">
-    <div class="stepTop"><div class="num">2</div><h2>領稅單</h2></div>
-    <div class="row"><div><label>預計日期</label><input type="date" data-k="taxBillDate"></div><div><label>預計處理</label><input data-k="taxBillMemo" placeholder="例如：代書通知後確認"></div></div>
-    <ul class="tasks"><li>領取土地增值稅單</li><li>如有營業登記，確認退／遷出</li></ul>
+    <div class="stepTop"><div class="num">2</div><h2>用印</h2></div>
+    <div class="row"><div><label>用印日</label><input type="date" data-k="sealDate"></div><div><label>用印款</label><input data-k="sealMoney" placeholder="例如：97萬"></div></div>
+    <ul class="tasks"><li>交付印鑑證明及用印文件</li><li>確認水、電、瓦斯是否需停止銀行扣繳</li><li>確認原貸款銀行是否有提前清償違約金</li></ul>
+    <label>補充提醒</label><textarea data-k="sealNote" placeholder="例如：請備妥印鑑證明"></textarea>
   </section>
 
   <section class="step">
@@ -85,7 +86,7 @@ if(v('property'))text+=`物件：${v('property')}\n`;
 if(v('seller'))text+=`賣方：${v('seller')}\n`;
 if(v('price'))text+=`成交總價：${v('price')}\n`;
 text+=`\n${line('簽約',v('signDate'),v('signMoney'),v('signNote'))}`;
-text+=`\n\n${line('領稅單',v('taxBillDate'),v('taxBillMemo'),'')}`;
+text+=`\n\n${line('用印',v('sealDate'),v('sealMoney'),v('sealNote'))}`;
 text+=`\n\n${line('完稅',v('taxDate'),v('taxMoney'),v('taxNote'))}`;
 text+=`\n\n${line('過戶／設定',v('transferDate'),v('balance'),v('transferNote'))}`;
 text+=`\n\n${line('交屋',v('handoverDate'),v('handoverMemo'),v('handoverNote'))}`;
