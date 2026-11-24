@@ -3,151 +3,250 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>賣方交易流程</title>
+<meta name="theme-color" content="#173a34">
+<title>買賣成交 LINE 通知產生器｜房仲交易工具</title>
 <style>
-:root{--bg:#f5f5f3;--card:#fff;--text:#1f1f1f;--muted:#70706b;--line:#deded8;--accent:#2f6b52;--soft:#edf4f0}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:var(--text)}
-.wrap{max-width:720px;margin:auto;padding:18px 14px 42px}.head{padding:8px 2px 16px}.head h1{margin:0;font-size:28px}.head p{margin:7px 0 0;color:var(--muted);font-size:14px;line-height:1.55}
-.box,.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
-label.field{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}input[type="text"],input[type="date"],textarea{width:100%;border:1px solid #d5d5cf;border-radius:10px;padding:11px 12px;font-size:16px;background:#fff;color:#111}textarea{min-height:68px;resize:vertical}
-.stepTop{display:flex;align-items:center;gap:11px;margin-bottom:12px}.num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:0 0 auto}.step h2{font-size:20px;margin:0}.dateRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}.dateRow.one{grid-template-columns:1fr}
-.taskTitle{font-size:13px;color:var(--muted);margin:2px 0 7px}.tasks{display:flex;flex-direction:column;gap:0;border-top:1px solid #ecece7}.task{display:flex;align-items:flex-start;gap:10px;padding:10px 2px;border-bottom:1px solid #ecece7;font-size:15px;line-height:1.45}.task input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--accent);flex:0 0 auto}.note{margin-top:12px}.tip{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.55;color:#365947;margin-top:10px}
-.actions{display:flex;gap:10px;position:sticky;bottom:12px;padding-top:8px}.actions button{flex:1;border:0;border-radius:12px;padding:13px 14px;font-size:16px;font-weight:700}.copy{background:var(--accent);color:white}.clear{background:#e9e9e5;color:#333}.small{font-size:12px;color:var(--muted);margin-top:6px}
-@media(max-width:560px){.grid,.dateRow{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:14px 12px 32px}.head h1{font-size:25px}}
+:root{--bg:#f4f6f4;--ink:#172d29;--muted:#667670;--line:#dce5df;--green:#18654f;--green-dark:#124937;--tint:#eaf3ee;--white:#fff;--shadow:0 12px 36px rgba(21,49,38,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.6}
+button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #86c3a6;outline-offset:2px}
+.top{background:#173a34;color:#fff}.top-inner{max-width:1240px;margin:auto;padding:24px 24px 27px}.eyebrow{font-size:12px;font-weight:700;letter-spacing:.15em;color:#b7d7c8;margin:0 0 5px}.top h1{font-size:clamp(23px,4vw,33px);line-height:1.3;margin:0;font-weight:800;letter-spacing:.02em}.top p{font-size:14px;margin:9px 0 0;color:#dcece5}
+.top-links{display:flex;align-items:center;gap:14px;margin-top:15px;font-size:13px}.top-links a{color:#cce3d7;text-decoration:underline;text-underline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 24px 70px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}.switch{display:flex;background:#e5ebe7;border-radius:13px;padding:5px;gap:4px}.switch button{border:0;padding:10px 24px;border-radius:10px;background:transparent;color:#455f54;font-weight:700;min-width:112px}.switch button.active{background:#fff;color:var(--green-dark);box-shadow:0 1px 7px #00000010}.save-note{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.columns{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px;align-items:start}.pane{min-width:0}.heading{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:0 0 13px}.heading h2{font-size:19px;margin:0}.heading span{color:var(--muted);font-size:12px}.section{background:#fff;border:1px solid var(--line);border-radius:17px;margin-bottom:13px;box-shadow:var(--shadow);overflow:hidden}.section summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;font-weight:800;font-size:15px}.section summary::-webkit-details-marker{display:none}.section summary::after{content:"⌄";color:#809289;font-size:20px;line-height:1}.section[open] summary::after{transform:rotate(180deg)}.section .fields{padding:4px 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field.full{grid-column:1/-1}.field label{display:block;font-size:13px;color:#506159;margin:0 0 6px;font-weight:600}.field input,.field textarea{width:100%;border:1px solid #d3ddd6;background:#fff;color:#17352a;border-radius:10px;padding:10px 12px;min-height:45px;outline-offset:2px;font-size:16px}.field input::placeholder,.field textarea::placeholder{color:#a4b0a9}.field textarea{resize:vertical;min-height:75px}.checkbox{grid-column:1/-1;display:flex;gap:9px;align-items:flex-start;border:1px solid #e0e8e2;border-radius:10px;padding:11px 12px;background:#f9fbf9;font-size:14px;color:#344c40}.checkbox input{width:18px;height:18px;accent-color:var(--green);flex:0 0 auto;margin:3px 0 0}.help{grid-column:1/-1;color:var(--muted);font-size:12px;margin:-3px 0 0}
+.preview-card{border:1px solid #dce4de;border-radius:18px;background:#fff;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:16px}.preview-top{padding:17px 19px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.preview-top h3{margin:0;font-size:16px}.preview-top small{font-size:12px;color:var(--muted)}.preview{margin:0;padding:22px 20px;font-size:14px;line-height:1.88;white-space:pre-wrap;overflow-wrap:anywhere;max-height:min(70vh,840px);overflow-y:auto;color:#25382f;font-family:inherit}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:13px 17px 17px;border-top:1px solid var(--line);background:#fff}.btn{border:1px solid var(--line);border-radius:11px;min-height:46px;padding:10px 12px;font-weight:750;font-size:14px;background:#f7faf8;color:var(--ink)}.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn:hover{filter:brightness(.98)}.actions .primary{grid-column:1/-1}.privacy{margin:14px 2px 0;color:#788780;font-size:12px;line-height:1.7}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:12px;padding:12px 18px;background:#163f31;color:#fff;box-shadow:0 8px 30px #0003;z-index:20;max-width:90vw;text-align:center;font-size:14px}.hide{display:none!important}.mobile-jump{display:none}
+@media(max-width:900px){.columns{grid-template-columns:1fr}.preview-card{position:static}.preview{max-height:none}.mobile-jump{display:inline-flex;align-items:center;justify-content:center;padding:9px 13px;border-radius:10px;background:#e4efe8;color:#17583f;text-decoration:none;font-weight:700;font-size:12px}.wrap{padding:16px 14px 45px}.top-inner{padding:21px 16px 22px}.toolbar{margin-bottom:14px}.section .fields{gap:12px}}
+@media(max-width:450px){.section .fields{grid-template-columns:1fr}.field.full{grid-column:auto}.switch{width:100%}.switch button{flex:1}.toolbar{align-items:stretch}.save-note{order:2}.preview{padding:18px 17px}.top h1{font-size:24px}}
+@media print{.top,.toolbar,.pane:first-child,.actions,.privacy,.mobile-jump{display:none!important}body,.wrap{background:#fff;padding:0}.columns{display:block}.preview-card{border:0;box-shadow:none}.preview{max-height:none;font-size:12px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="head">
-    <h1>賣方交易流程</h1>
-    <p>以屋主需要處理的事項為主。填好各階段日期、確認待辦，就可以直接整理成訊息傳給屋主。</p>
-  </div>
-
-<section class="box" style="border-color:#c9e2d4;background:#eff8f2;padding:16px;margin-bottom:16px">
-  <div style="font-size:14px;font-weight:800;margin-bottom:5px;color:#184d36">新增：買方／賣方成交 LINE 通知</div>
-  <p style="color:#47715d;font-size:13px;margin:0 0 11px;line-height:1.55">填寫日期與成交資訊，直接產生可傳給客戶的文字。買方、賣方都可切換使用。</p>
-  <a href="./messages.html" style="display:inline-block;border-radius:10px;padding:10px 14px;background:#216a4e;color:white;text-decoration:none;font-weight:700;font-size:14px">開啟成交通知產生器 →</a>
-</section>
-
-  <section class="box grid">
-    <div class="full"><label class="field">物件地址／案件名稱</label><input type="text" data-k="property" placeholder="例如：板橋區中山路二段"></div>
-    <div class="full"><label class="field">屋主姓名</label><input type="text" data-k="seller" placeholder="姓名"></div>
+<header class="top"><div class="top-inner">
+ <div class="eyebrow">房仲工作小工具</div>
+ <h1>買賣成交 LINE 通知產生器</h1>
+ <p>填一次成交資訊，整理成自然、清楚、可以直接傳給客戶的訊息。</p>
+ <div class="top-links"><span>買方／賣方切換</span><span>｜</span><span>免登入・手機可用</span></div>
+</div></header>
+<main class="wrap">
+ <div class="toolbar">
+   <div class="switch" role="group" aria-label="通知對象">
+    <button type="button" data-mode="buyer" class="active" aria-pressed="true">🏠 買方通知</button>
+    <button type="button" data-mode="seller" aria-pressed="false">🔑 賣方通知</button>
+   </div>
+   <div class="save-note">✓ 自動儲存在這台裝置</div>
+ </div>
+ <div class="columns">
+  <section class="pane" aria-label="填寫資料">
+   <div class="heading"><h2>填寫案件資料</h2><a class="mobile-jump" href="#previewArea">查看訊息預覽 ↓</a></div>
+   <div id="formArea"></div>
   </section>
-
-  <section class="step" data-step="sign">
-    <div class="stepTop"><div class="num">1</div><h2>簽約</h2></div>
-    <div class="dateRow one"><div><label class="field">簽約日</label><input type="date" data-k="signDate"></div></div>
-    <div class="taskTitle">屋主需確認／處理</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="sign-doc"><span>確認簽約內容及相關文件</span></label>
-      <label class="task"><input type="checkbox" data-check="sign-title"><span>依代書通知備妥土地、建物權狀等文件</span></label>
-      <label class="task"><input type="checkbox" data-check="sign-tax"><span>配合土地增值稅申報所需文件</span></label>
+  <section class="pane" id="previewArea" aria-label="通知預覽">
+   <div class="heading"><h2>LINE 訊息預覽</h2><span>空白欄位會顯示「＿＿」</span></div>
+   <div class="preview-card">
+    <div class="preview-top"><h3 id="previewTitle">買方成交後通知</h3><small>純文字・直接貼 LINE</small></div>
+    <pre class="preview" id="previewText" aria-live="polite"></pre>
+    <div class="actions">
+      <button class="btn primary" id="copyBtn" type="button">複製完整訊息</button>
+      <button class="btn" id="downloadBtn" type="button">下載 TXT</button>
+      <button class="btn" id="clearBtn" type="button">清空目前表單</button>
     </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="signNote" placeholder="例如：請攜帶印章、身分證件"></textarea></div>
+   </div>
+   <p class="privacy">資料僅儲存在目前瀏覽器，不會自動上傳到網站。切換買方、賣方後，各自的欄位會保留。送出訊息前請核對契約、代書通知及實際日期。</p>
   </section>
-
-  <section class="step" data-step="seal">
-    <div class="stepTop"><div class="num">2</div><h2>用印</h2></div>
-    <div class="dateRow one"><div><label class="field">用印日</label><input type="date" data-k="sealDate"></div></div>
-    <div class="taskTitle">屋主需確認／處理</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="seal-cert"><span>備妥並交付印鑑證明及用印所需文件</span></label>
-      <label class="task"><input type="checkbox" data-check="seal-auto"><span>確認水、電、瓦斯是否需停止銀行自動扣繳</span></label>
-      <label class="task"><input type="checkbox" data-check="seal-loan"><span>有原貸款者，向銀行確認提前清償是否有違約金</span></label>
-    </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="sealNote" placeholder="例如：印鑑證明需準備幾份"></textarea></div>
-  </section>
-
-  <section class="step" data-step="taxbill">
-    <div class="stepTop"><div class="num">3</div><h2>領稅單</h2></div>
-    <div class="dateRow one"><div><label class="field">預計日期</label><input type="date" data-k="taxBillDate"></div></div>
-    <div class="taskTitle">屋主需確認／處理</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="taxbill-receive"><span>確認土地增值稅單已領取</span></label>
-      <label class="task"><input type="checkbox" data-check="taxbill-business"><span>如有營業登記，完成營業登記遷出</span></label>
-    </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="taxBillNote" placeholder="需要特別提醒屋主的事項"></textarea></div>
-  </section>
-
-  <section class="step" data-step="tax">
-    <div class="stepTop"><div class="num">4</div><h2>完稅</h2></div>
-    <div class="dateRow"><div><label class="field">完稅日</label><input type="date" data-k="taxDate"></div><div><label class="field">預定騰空日</label><input type="date" data-k="vacateDate"></div></div>
-    <div class="taskTitle">屋主需確認／處理</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="tax-paid"><span>確認土地增值稅、地價稅、房屋稅等相關稅費處理完成</span></label>
-      <label class="task"><input type="checkbox" data-check="tax-vacate"><span>確認搬遷、騰空時程</span></label>
-    </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="taxNote" placeholder="例如：預計於交屋前完成騰空"></textarea></div>
-  </section>
-
-  <section class="step" data-step="transfer">
-    <div class="stepTop"><div class="num">5</div><h2>過戶／設定</h2></div>
-    <div class="dateRow one"><div><label class="field">預計辦理日</label><input type="date" data-k="transferDate"></div></div>
-    <div class="taskTitle">屋主需確認／處理</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="transfer-bank"><span>有原貸款者，與銀行確認清償帳號、金額及承辦窗口</span></label>
-      <label class="task"><input type="checkbox" data-check="transfer-household"><span>完成戶籍遷出</span></label>
-      <label class="task"><input type="checkbox" data-check="transfer-vacate"><span>完成搬遷與房屋騰空</span></label>
-      <label class="task"><input type="checkbox" data-check="transfer-items"><span>確認屋內附贈設備、家具及應留物品</span></label>
-      <label class="task"><input type="checkbox" data-check="transfer-utility"><span>確認水、電、瓦斯等費用結清方式</span></label>
-      <label class="task"><input type="checkbox" data-check="transfer-taxreturn"><span>依代書／稅務人員通知，辦理出售房地相關申報</span></label>
-    </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="transferNote" placeholder="例如：哪些設備會留下、戶籍預計何時遷出"></textarea></div>
-  </section>
-
-  <section class="step" data-step="handover">
-    <div class="stepTop"><div class="num">6</div><h2>交屋</h2></div>
-    <div class="dateRow"><div><label class="field">預定交屋日</label><input type="date" data-k="handoverDate"></div><div><label class="field">時間／地點</label><input type="text" data-k="handoverMemo" placeholder="例如：10:00 門市"></div></div>
-    <div class="taskTitle">交屋前請準備／確認</div>
-    <div class="tasks">
-      <label class="task"><input type="checkbox" data-check="handover-title"><span>土地、建物權狀及印章</span></label>
-      <label class="task"><input type="checkbox" data-check="handover-key"><span>房屋鑰匙、遙控器及相關門禁物品</span></label>
-      <label class="task"><input type="checkbox" data-check="handover-bank"><span>本人收款帳號資料（或存摺）</span></label>
-      <label class="task"><input type="checkbox" data-check="handover-docs"><span>房屋相關單據、保固資料及應交付文件</span></label>
-      <label class="task"><input type="checkbox" data-check="handover-utility"><span>確認水、電、瓦斯與管理費等已完成分算／結清</span></label>
-      <label class="task"><input type="checkbox" data-check="handover-check"><span>完成屋況、設備與物品點交</span></label>
-    </div>
-    <div class="note"><label class="field">補充提醒</label><textarea data-k="handoverNote" placeholder="交屋當天需要另外攜帶或確認的事項"></textarea></div>
-  </section>
-
-  <section class="box">
-    <label class="field">後續提醒</label>
-    <textarea data-k="finalNote" placeholder="例如：依適用稅制確認後續申報事項"></textarea>
-    <div class="tip">這一版不填任何交易款項，重點只放在「什麼時候」以及「屋主需要做什麼」。</div>
-    <div class="small">資料只會儲存在這台裝置的瀏覽器。</div>
-  </section>
-
-  <div class="actions"><button class="copy" id="copyBtn">複製給屋主</button><button class="clear" id="clearBtn">清空</button></div>
-</div>
+ </div>
+</main>
+<div class="toast hide" id="toast" role="status"></div>
 <script>
-const fields=[...document.querySelectorAll('[data-k]')];
-const checks=[...document.querySelectorAll('[data-check]')];
-const KEY='seller-task-workflow-v2';
-let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
-fields.forEach(el=>{el.value=saved[el.dataset.k]||'';el.addEventListener('input',save);el.addEventListener('change',save)});
-checks.forEach(el=>{el.checked=!!(saved.checks&&saved.checks[el.dataset.check]);el.addEventListener('change',save)});
-function save(){const o={checks:{}};fields.forEach(el=>o[el.dataset.k]=el.value);checks.forEach(el=>o.checks[el.dataset.check]=el.checked);localStorage.setItem(KEY,JSON.stringify(o))}
-function v(k){const el=document.querySelector(`[data-k="${k}"]`);return el?el.value.trim():''}
-function d(s){if(!s)return '尚未填寫';const [y,m,day]=s.split('-');return `${Number(y)-1911}/${m}/${day}`}
-const steps=[
- {name:'簽約',date:'signDate',note:'signNote',tasks:['確認簽約內容及相關文件','依代書通知備妥土地、建物權狀等文件','配合土地增值稅申報所需文件']},
- {name:'用印',date:'sealDate',note:'sealNote',tasks:['備妥並交付印鑑證明及用印所需文件','確認水、電、瓦斯是否需停止銀行自動扣繳','有原貸款者，向銀行確認提前清償是否有違約金']},
- {name:'領稅單',date:'taxBillDate',note:'taxBillNote',tasks:['確認土地增值稅單已領取','如有營業登記，完成營業登記遷出']},
- {name:'完稅',date:'taxDate',note:'taxNote',tasks:['確認相關稅費處理完成','確認搬遷、騰空時程'],extra:()=>v('vacateDate')?`\n預定騰空日：${d(v('vacateDate'))}`:''},
- {name:'過戶／設定',date:'transferDate',note:'transferNote',tasks:['有原貸款者，確認清償銀行資料','完成戶籍遷出','完成搬遷與房屋騰空','確認屋內附贈設備及應留物品','確認水、電、瓦斯等費用結清方式','依通知辦理出售房地相關申報']},
- {name:'交屋',date:'handoverDate',note:'handoverNote',tasks:['備妥土地、建物權狀及印章','備妥鑰匙、遙控器及門禁物品','備妥本人收款帳號資料','備妥房屋相關單據及文件','確認相關費用完成分算／結清','完成屋況、設備與物品點交'],extra:()=>v('handoverMemo')?`\n時間／地點：${v('handoverMemo')}`:''}
+(function(){
+'use strict';
+const KEY='property-closing-line-template-v1';
+const week=['日','一','二','三','四','五','六'];
+const gap='＿＿';
+const sharedGroups=[
+ {title:'案件與代書資訊',items:[
+  ['project','案件名稱／路段','例如：板橋光復街','text','full'],
+  ['address','完整地址','例如：板橋區光復街＿＿巷＿＿號','text','full'],
+  ['salePrice','成交總價（萬元）','例如：1208'],
+  ['notary','代書姓名','例如：陳小玲'],
+  ['notaryPhone','代書電話','例如：09＿＿＿＿＿＿＿＿','tel','full']
+ ]}
 ];
-document.getElementById('copyBtn').onclick=async()=>{
- let text='您好，以下為本案賣方交易流程與需配合事項：\n\n';
- if(v('property'))text+=`物件：${v('property')}\n`;
- if(v('seller'))text+=`屋主：${v('seller')}\n`;
- steps.forEach(s=>{text+=`\n【${s.name}】${d(v(s.date))}`;if(s.extra)text+=s.extra();text+='\n需確認／處理：';s.tasks.forEach(t=>text+=`\n・${t}`);if(v(s.note))text+=`\n提醒：${v(s.note)}`;text+='\n';});
- if(v('finalNote'))text+=`\n後續提醒：${v('finalNote')}\n`;
- text+='\n如流程時間有調整，我會再第一時間通知您。';
- try{await navigator.clipboard.writeText(text);alert('已複製，可以直接貼到 LINE 給屋主');}catch(e){prompt('請複製以下內容：',text)}
-};
-document.getElementById('clearBtn').onclick=()=>{if(confirm('確定要清空全部資料嗎？')){localStorage.removeItem(KEY);fields.forEach(el=>el.value='');checks.forEach(el=>el.checked=false)}};
+const buyerGroups=[
+ {title:'買方稱呼與貸款',items:[
+  ['salutation','買方稱呼','例如：王姐'],
+  ['estimatedLoan','預計貸款（萬元）','例如：803'],
+  ['loanDate','用印前確認貸款日期','','date'],
+  ['extraNote','額外提醒（選填）','', 'textarea','full']
+ ]},
+ {title:'簽約與用印',items:[
+  ['signDate','簽約日期','','date'],
+  ['signPay','簽約款（萬元）','例如：100'],
+  ['supplement','是否有簽約款補款','','checkbox','full'],
+  ['supplementDate','補款日期（選填）','','date'],
+  ['supplementPay','補款金額（萬元，選填）',''],
+  ['sealDate','用印日期','','date']
+ ]},
+ {title:'完稅、過戶與交屋',items:[
+  ['taxDate','完稅日期','','date'],
+  ['taxPay','完稅階段房價款（萬元）','例如：101'],
+  ['handoverDate','預定交屋日期','','date'],
+  ['finalPay','尾款（萬元）','例如：803']
+ ]}
+];
+const sellerGroups=[
+ {title:'屋主稱呼與成交資訊',items:[
+  ['salutation','屋主稱呼','例如：付姐'],
+  ['area','登記坪數','例如：25.7'],
+  ['unitPrice','成交單價（萬元／坪）','例如：47'],
+  ['fee','仲介服務費（萬元）','例如：28'],
+  ['feeRate','服務費約占總價（%）','例如：2.3']
+ ]},
+ {title:'簽約、報稅與相關文件',items:[
+  ['signDate','簽約／用印日期','','date'],
+  ['titleGiven','已交付權狀正本','','checkbox','full'],
+  ['buildingTitle','建物權狀張數（選填）','例如：1'],
+  ['landTitle','土地權狀張數（選填）','例如：1'],
+  ['taxReportDate','預計報稅日期','','date'],
+  ['proofCount','印鑑證明份數','例如：1'],
+  ['chloride','需要檢測氯離子','','checkbox','full']
+ ]},
+ {title:'完稅、搬遷與交屋',items:[
+  ['taxDate','預定繳稅日期','','date'],
+  ['transferDate','預定送件過戶日期','','date'],
+  ['vacateDate','屋內搬家騰空期限','','date'],
+  ['handoverDate','最晚交屋日期','','date'],
+  ['loanDelay','加入銀行貸款撥款延遲提醒','','checkbox','full'],
+  ['extraNote','額外提醒（選填）','','textarea','full']
+ ]}
+];
+function fresh(){return {shared:{},buyer:{},seller:{}};}
+let store=fresh();
+try{let s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&typeof s==='object'){store.shared=s.shared||{};store.buyer=s.buyer||{};store.seller=s.seller||{};}}catch(e){}
+let mode='buyer';
+const form=document.getElementById('formArea'),preview=document.getElementById('previewText'),toast=document.getElementById('toast');
+function val(k,scope){let v=(store[scope||mode]||{})[k];return typeof v==='string'?v.trim():'';}
+function any(k){return val(k,'shared');}
+function fill(v){return v||gap;}
+function money(v){return fill(v)+'萬元';}
+function formatDate(s){
+ if(!s)return '＿＿/＿＿/＿＿（＿）';
+ let a=s.split('-').map(Number);
+ if(a.length!==3||!a[0]||!a[1]||!a[2])return s;
+ let date=new Date(a[0],a[1]-1,a[2],12);
+ if(date.getFullYear()!==a[0]||date.getMonth()!==a[1]-1||date.getDate()!==a[2])return s;
+ return (a[0]-1911)+'/'+String(a[1]).padStart(2,'0')+'/'+String(a[2]).padStart(2,'0')+'（'+week[date.getDay()]+'）';
+}
+function showDate(k){return formatDate(val(k));}
+function lineDate(k){return formatDate(val(k));}
+function buildGroup(g,scope){
+ const details=document.createElement('details');details.className='section';details.open=true;
+ const summary=document.createElement('summary');summary.textContent=g.title;details.appendChild(summary);
+ const grid=document.createElement('div');grid.className='fields';
+ g.items.forEach(item=>{
+  let k=item[0],title=item[1],placeholder=item[2]||'',type=item[3]||'text',width=item[4]||'';
+  if(type==='checkbox'){
+   const wrap=document.createElement('label');wrap.className='checkbox';
+   const input=document.createElement('input');input.type='checkbox';input.checked=store[scope][k]==='1';
+   const span=document.createElement('span');span.textContent=title;
+   input.addEventListener('change',()=>{store[scope][k]=input.checked?'1':'';save();renderPreview();});
+   wrap.append(input,span);grid.appendChild(wrap);return;
+  }
+  const wrap=document.createElement('div');wrap.className='field '+(width==='full'?'full':'');
+  const label=document.createElement('label');label.textContent=title;
+  const id=scope+'-'+k;label.htmlFor=id;
+  let input=type==='textarea'?document.createElement('textarea'):document.createElement('input');
+  if(type!=='textarea'){input.type=type==='tel'?'tel':type==='date'?'date':'text';if(type==='text')input.autocomplete='off';}
+  input.id=id;input.placeholder=placeholder;input.value=store[scope][k]||'';
+  input.addEventListener('input',()=>{store[scope][k]=input.value;save();renderPreview();});
+  input.addEventListener('change',()=>{store[scope][k]=input.value;save();renderPreview();});
+  wrap.append(label,input);grid.appendChild(wrap);
+ });
+ details.appendChild(grid);return details;
+}
+function renderForm(){
+ form.replaceChildren();
+ sharedGroups.concat([]).forEach(g=>form.appendChild(buildGroup(g,'shared')));
+ (mode==='buyer'?buyerGroups:sellerGroups).forEach(g=>form.appendChild(buildGroup(g,mode)));
+ document.querySelectorAll('[data-mode]').forEach(b=>{let active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+ document.getElementById('previewTitle').textContent=mode==='buyer'?'買方成交後通知':'賣方成交後通知';
+ renderPreview();
+}
+function commonIntro(){
+ return '🛑承辦代書：'+fill(any('notary'))+'代書\n☎️代書電話：'+fill(any('notaryPhone'))+'\n\n後續如果有貸款、稅費或過戶相關問題，都可以直接詢問代書，當然也可以先問我，我會協助您處理。';
+}
+function buyerText(){
+ const b=k=>fill(val(k));
+ const part=[
+  b('salutation')+'晚安',
+  '恭喜我們終於順利簽約成交了🎉',
+  '謝謝您給我這次服務的機會，很開心能陪您一起找到喜歡的房子，也讓我們順利完成這次交易！',
+  '接下來還有一些買賣手續需要完成，我先幫您把後續流程整理好，讓您比較清楚每個階段需要準備的事情。',
+  '🏠 我們'+fill(any('project'))+'的案件\n\n'+commonIntro(),
+  '——————',
+  '🏠 成交資訊\n\n地址：'+fill(any('address'))+'\n成交總價：'+money(any('salePrice'))+'\n預計貸款：'+money(val('estimatedLoan')),
+  '——————',
+  '🛑 '+lineDate('signDate')+' 簽約\n\n⭕️完成買賣契約簽訂\n⭕️簽約款'+money(val('signPay'))+(val('supplement')==='1'?'\n⭕️'+formatDate(val('supplementDate'))+'補足簽約款'+money(val('supplementPay')):''),
+  '🛑 '+showDate('loanDate')+'前確認貸款\n\n⭕️確認貸款銀行及預計貸款成數\n⭕️確認銀行貸款額度是否符合需求\n⭕️準備銀行所需資料並提出貸款申請\n\n主要是在用印前先確認貸款條件，讓我們能提前掌握預計貸款金額及需要準備的自備款。',
+  '🛑 '+showDate('sealDate')+' 用印\n\n⭕️辦理買賣用印手續\n⭕️確認房屋登記名義人\n⭕️依代書通知準備相關文件及費用\n⭕️確認銀行貸款審核進度',
+  '🛑 '+showDate('taxDate')+' 完稅\n\n⭕️準備完稅款'+money(val('taxPay'))+'\n⭕️相關稅費依代書通知繳納\n⭕️確認銀行貸款及對保進度',
+  '🛑 完稅後辦理過戶\n\n⭕️代書辦理房屋及土地所有權移轉登記\n⭕️辦理銀行抵押權設定\n⭕️確認過戶及相關登記手續完成',
+  '🛑 過戶後安排驗屋\n\n⭕️與屋主協調驗屋時間\n⭕️確認房屋現況及設備是否正常\n⭕️確認附贈設備是否符合買賣約定\n⭕️若有需要處理的問題，提前與屋主協調\n\n如果有需要處理的地方，也能提前確認，避免影響後續交屋。',
+  '🛑 '+showDate('handoverDate')+' 預定交屋\n\n⭕️確認銀行貸款及尾款'+money(val('finalPay'))+'撥付\n⭕️確認驗屋後需要處理的事項\n⭕️結算水、電、瓦斯等相關費用\n⭕️辦理房屋及鑰匙交付\n⭕️完成正式交屋手續\n\n這天是目前預定的交屋日期，實際時間會依銀行撥款及相關手續進度，再與雙方協調確認。',
+  '🛑 交屋後續事項\n\n⭕️因帳單有作業時間差，最近一期水、電、瓦斯帳單仍可能顯示原屋主姓名，收到下一期帳單時，記得留意是否已變更為您的名字。\n\n⭕️視需求安排戶籍遷入\n\n⭕️符合資格者，可申請房屋稅及地價稅自住優惠',
+  '——————',
+  '⚠️ 特別提醒\n\n以上是目前預定的買賣流程。\n若銀行貸款審核、對保或撥款時間有所調整，後續時程也可能需要配合協調。',
+  '以上先幫您做個簡單的流程紀錄，後續每個階段需要準備什麼，我也會再提前提醒您。\n\n再次恭喜您買到喜歡的房子🏠\n\n謝謝您的信任，接下來我們一起順利完成交屋！'
+ ];
+ if(val('extraNote'))part.splice(part.length-2,0,'補充提醒：'+val('extraNote'));
+ return part.join('\n\n');
+}
+function sellerText(){
+ const b=k=>fill(val(k));
+ const intro=[
+  b('salutation')+'晚安',
+  '恭喜我們終於簽約成交了🎉',
+  '謝謝您給我機會服務售屋，讓我們能一起順利成交。',
+  '我們'+fill(any('project'))+'案\n\n🛑代書為 '+fill(any('notary'))+' 代書\n代書電話是'+fill(any('notaryPhone')),
+  '若之後有手續上的問題，都可以去電詢問（當然也可以先問我）。',
+  '——————',
+  '我們'+fill(any('address'))+'\n登記'+b('area')+'坪\n成交'+money(any('salePrice'))+'\n單價'+b('unitPrice')+'萬／坪\n仲介服務費'+money(val('fee'))+'\n（約'+b('feeRate')+'%）',
+  '——————',
+  '🛑 '+lineDate('signDate')+'\n已完成簽約、用印手續'+(val('titleGiven')==='1'?'\n已給代書權狀正本（建物'+b('buildingTitle')+'張、土地'+b('landTitle')+'張）':''),
+  '🛑 '+lineDate('taxReportDate')+' 報稅\n⭕️要收印鑑證明文件'+b('proofCount')+'份'+(val('chloride')==='1'?'\n⭕️要完成檢測氯離子':''),
+  '🛑 '+lineDate('taxDate')+'\n要繳稅',
+  '🛑 '+lineDate('transferDate')+'\n代書送件辦理過戶',
+  '🛑 '+lineDate('vacateDate')+'\n⭕️要完成屋內搬家騰空',
+  '🛑 '+lineDate('handoverDate')+'\n最晚這天要完成交屋手續'
+ ];
+ if(val('loanDelay')==='1')intro.push('🛑若遇到銀行貸款排隊撥款問題，後續日期可能需要依契約與雙方協調調整。');
+ if(val('extraNote'))intro.push('補充提醒：'+val('extraNote'));
+ intro.push('以上做個簡單的流程紀錄。\n謝謝您，今天辛苦了！');
+ return intro.join('\n\n');
+}
+function getText(){return mode==='buyer'?buyerText():sellerText();}
+function renderPreview(){preview.textContent=getText();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
+function message(s){toast.textContent=s;toast.classList.remove('hide');clearTimeout(message.timeout);message.timeout=setTimeout(()=>toast.classList.add('hide'),2500);}
+async function copy(){
+ const t=getText();
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t);message('已複製！可以直接貼到 LINE');return;}}
+ catch(e){}
+ const el=document.createElement('textarea');el.value=t;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.focus();el.select();el.setSelectionRange(0,el.value.length);
+ let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+ el.remove();
+ if(ok)message('已複製！可以直接貼到 LINE');else{window.prompt('請複製以下文字：',t);}
+}
+document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{mode=btn.dataset.mode;renderForm();}));
+document.getElementById('copyBtn').addEventListener('click',copy);
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+ const blob=new Blob([getText()],{type:'text/plain;charset=utf-8'});
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(mode==='buyer'?'買方':'賣方')+'成交通知.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);message('已產生文字檔');
+});
+document.getElementById('clearBtn').addEventListener('click',()=>{
+ if(!confirm('確定清空目前這份'+(mode==='buyer'?'買方':'賣方')+'通知的資料嗎？案件與代書共用欄位會保留。'))return;
+ store[mode]={};save();renderForm();message('已清空目前通知資料');
+});
+renderForm();
+})();
 </script>
 </body>
 </html>
